@@ -8,34 +8,37 @@ void decipherOneInstruction(int* instruction){
     int size6 = sizeof(sixBitInstructions) / sizeof(sixBitInstructions[0]);
     for (int i = 0; i < size6; i++) {
         if (sixBitInstructions[i].opcode == opcodeInstruction) {
-            char instruction = sixbitopcode(opcodeInstruction, size6);
+            char instruction = sixBitInstructions[i].opcode
             int BR_address = *instruction & 0x03FFFFFF; // Extract the remaining 26 bits
+            //should return combined instruction for B type
         }
     }
     int opcodeInstruction2 = (*instruction >> 24) & 0xFF; // Extract the first 8 bits
     int size8 = sizeof(eightBitInstructions) / sizeof(eightBitInstructions[0]);
     for (int i = 0; i < size8; i++) {
         if (eightBitInstructions[i].opcode == opcodeInstruction2) {
-            char instruction = eightbitopcode(opcodeInstruction2, size8);
+            char instruction = eightBitInstructions[i].opcode
             int COND_BR_address = (*instruction >> 6) & 0x3FFFF; // Extract the next 18 bits
             int Rt = (*instruction) & 0x1F; // Extract the last 5 bits
+            //should return combined instruction for CB type
         }
     }
     int opcodeInstruction3 = (*instruction >> 22) & 0x3FF; // Extract the first 10 bits
     int size9 = sizeof(tenBitInstructions) / sizeof(tenBitInstructions[0]);
     for (int i = 0; i < size4; i++) {
         if (tenBitInstructions[i].opcode == opcodeInstruction3) {
-            char instruction = tenbitopcode(opcodeInstruction3, size10);
+            char instruction = tenBitInstructions[i].opcode
             int ALU_immediate = (*instruction >> 10) & 0xFFF; // Extract the next 12 bits
             int Rn = (*instruction >> 5) & 0x1F; // Extract the next 5 bits
             int Rd = (*instruction) & 0x1F; // Extract the last 5 bits
+            //should return combined instruction for I type
         }
     }
     int opcodeInstruction4 = (*instruction >> 21) & 0x7FF; // Extract the first 11 bits
     int size11 = sizeof(elevenBitInstructions) / sizeof(elevenBitInstructions[0]);
     for (int i = 0; i < size11; i++) {
         if (elevenBitInstructions[i].opcode == opcodeInstruction4) {
-            char instruction = elevenbitopcode(opcodeInstruction4, size11);
+            char instruction = elevenBitInstructions[i].opcode
 
         }
     }
@@ -57,48 +60,102 @@ void decipherOneInstruction(int* instruction){
             int Rt = (*instruction) & 0x1F; // Extract the last 5 bits
         }
     }
+    //should return combined instruction for R or D type
 
     //this function should seperate instruction into different possible fields, then figure out what instruction type it is.
     //It will then call the corresponding function
 }
 
 //will probably want a function that accepts the fields for the instruction type for all types
-char* sixbitopcode(int* opcodeInstruction, int* size){ //will accept parameters needed for 8 bit opcode instructions
-    for (int i = 0; i < *size; i++) {
-        if (sixBitInstructions[i].opcode == opcodeInstruction) {
+char* bTypeToEnglish(int* opcodeInstruction, int* BR_address){ //will accept parameters needed for 8 bit opcode instructions
+    int size6 = sizeof(sixBitInstructions) / sizeof(sixBitInstructions[0]);
+    for (int i = 0; i < size6; i++) {
+        if (sixBitInstructions[0].opcode == opcodeInstruction) {
             return sixBitInstructions[i].name;
         }
     }
+    int BR_address_integer = *BR_address;
+    char result[100];
+    sprintf(result, "Instruction%d", BR_address); //B: label?
+
+    return result;
+        //returns instruction in string form for 8 bit instruction
+}
+
+char* cbTypeToEnglish(int* opcodeInstruction, int* COND_BR_address, int* Rt){ //will accept parameters needed for 8 bit opcode instructions
+    int size6 = sizeof(sixBitInstructions) / sizeof(sixBitInstructions[0]);
+    for (int i = 0; i < size6; i++) {
+        if (sixBitInstructions[0].opcode == opcodeInstruction) {
+            return sixBitInstructions[i].name;
+        }
+    }
+    int COND_BR_address_integer = *COND_BR_address;
+    int Rt_integer = *Rt;
+    char result[100];
+    sprintf(result, "Instruction: %dX%d", COND_BR_address_integer, Rt_integer); //CBZ: 2,x0 example
+
+    return result;
     //returns instruction in string form for 8 bit instruction
 }
-char* eightbitopcode(int* opcodeInstruction, int* size){
-    for (int i = 0; i < *size; i++) {
-        if (eightBitInstructions[i].opcode == opcodeInstruction) {
-            return eightBitInstructions[i].name;
+
+char* iTypeToEnglish(int* opcodeInstruction, int* ALU_immediate, int* Rn, int* Rd){ //will accept parameters needed for 8 bit opcode instructions
+    int size6 = sizeof(sixBitInstructions) / sizeof(sixBitInstructions[0]);
+    for (int i = 0; i < size6; i++) {
+        if (sixBitInstructions[0].opcode == opcodeInstruction) {
+            return sixBitInstructions[i].name;
         }
     }
+    int ALU_immediate_integer = *ALU_immediate;
+    int Rn_integer = *Rn;
+    int Rd_integer = *Rd;
+    char result[100];
+    sprintf(result, "Instruction: X%d,X%d,#%d", Rn_integer, Rd_integer, ALU_immediate_integer); //ADDI: x0,x1,#2 example
+
+    return result;
+    //returns instruction in string form for 8 bit instruction
 }
-char* tenbitopcode(int* opcodeInstruction, int* size){
-    for (int i = 0; i < *size; i++) {
-        if (tenBitInstructions[i].opcode == opcodeInstruction) {
-            return tenBitInstructions[i].name;
+
+char* rTypeToEnglish(int* opcodeInstruction, int* Rm, int* shamt, int* Rn, int* Rd){ //will accept parameters needed for 8 bit opcode instructions
+    int size6 = sizeof(sixBitInstructions) / sizeof(sixBitInstructions[0]);
+    for (int i = 0; i < size6; i++) {
+        if (sixBitInstructions[0].opcode == opcodeInstruction) {
+            return sixBitInstructions[i].name;
         }
     }
+    int Rm_integer = *Rm;
+    int shamt_integer = *shamt;
+    int Rn_integer = *Rn;
+    int Rd_integer = *Rd;
+    char result[100];
+    sprintf(result, "Instruction: X%d,X%d,X%d", Rn_integer, Rd_integer, ALU_immediate_integer); //ADD: x0,x1,x2 example
+
+    return result;
+    //returns instruction in string form for 8 bit instruction
 }
-char* elevenbitopcode(int* opcodeInstruction, int* size){
-    for (int i = 0; i < *size; i++) {
-        if (elevenBitInstructions[i].opcode == opcodeInstruction) {
-            return elevenBitInstructions[i].name;
+
+char* dTypeToEnglish(int* opcodeInstruction, int* DT_address, int* Rn, int* Rd){ //will accept parameters needed for 8 bit opcode instructions
+    int size6 = sizeof(sixBitInstructions) / sizeof(sixBitInstructions[0]);
+    for (int i = 0; i < size6; i++) {
+        if (sixBitInstructions[0].opcode == opcodeInstruction) {
+            return sixBitInstructions[i].name;
         }
     }
+    int DT_address_integer = *DT_address;
+    int Rn_integer = *Rn;
+    int Rd_integer = *Rd;
+    char result[100];
+    sprintf(result, "Instruction: X%d,[X%d,#%d]", Rn_integer, Rd_integer, DT_address_integer); //LDUR: x0,[SP,#2] example
+    //returns instruction in string form for 8 bit instruction
 }
+
 instruction_t sixBitInstructions[] = {
     { "B",       B_inst,      0b000101      },
     { "BL",      BL_inst,     0b100101      }
 };
 instruction_t eightBitInstructions[] = {
     { "CBNZ",    CBNZ_inst,   0b10110101    },
-    { "CBZ",     CBZ_inst,    0b10110100    }
+    { "CBZ",     CBZ_inst,    0b10110100    },
+    { "B.cond",  B_cond_inst, 0b01010100    }
 };
 instruction_t tenBitInstructions[] = {
     { "ADDI",    ADDI_inst,   0b1001000100  },
